@@ -1,0 +1,77 @@
+name: CN AI Weekly Digest — Full Pipeline
+
+on:
+  schedule:
+    - cron: '0 1 * * 1'  # 每周一 09:00 CST
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+env:
+  PYTHONUNBUFFERED: '1'
+
+jobs:
+  weekly-publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Compute week metadata
+        id: week
+        run: |
+          WEEK_NUM=$(date +%Y-W%V)
+          echo "week_number=${WEEK_NUM}" >> $GITHUB_OUTPUT
+          DAY_OF_WEEK=$(date +%u)
+          OFFSET=$((DAY_OF_WEEK - 1))
+          MONDAY=$(date -d "-${OFFSET} days" +%Y.%m.%d)
+          SUNDAY=$(date -d "+$((6 - OFFSET)) days" +%Y.%m.%d)
+          echo "week_start=${MONDAY}" >> $GITHUB_OUTPUT
+          echo "week_end=${SUNDAY}" >> $GITHUB_OUTPUT
+          echo "report_date=$(date +%Y-%m-%d)" >> $GITHUB_OUTPUT
+
+      - name: Check duplicates
+        id: check
+        run: |
+          if [ -f "output/${{ steps.week.outputs.week_number }}.md" ]; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Generate Report
+        if: steps.check.outputs.exists == 'false'
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          mkdir -p output
+          echo "Generating CN AI Weekly Digest for ${{ steps.week.outputs.week_number }}..."
+
+      - name: Commit and Push
+        if: steps.check.outputs.exists == 'false'
+        run: |
+          git config user.name "CN AI Digest Bot"
+          git config user.email "cn-ai-bot@users.noreply.github.com"
+          git add output/
+          git diff --cached --quiet || git commit -m "auto: ${{ steps.week.outputs.week_number }} 中国AI周报"
+          git pull --rebase origin main 2>/dev/null || true
+          git push origin main
+
+      - name: Summary
+        run: |
+          if [ "${{ steps.check.outputs.exists }}" == "true" ]; then
+            echo "## ⏭️ 本期已存在" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "## ✅ 中国 AI 周报已生成" >> $GITHUB_STEP_SUMMARY
+            echo "**周次:** ${{ steps.week.outputs.week_number }}" >> $GITHUB_STEP_SUMMARY
+          fi
