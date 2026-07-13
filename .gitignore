@@ -1,0 +1,11 @@
+# CN AI Weekly Digest
+
+.DS_Store
+*.swp
+*.swo
+.idea/
+.vscode/
+__pycache__/
+*.pyc
+output/*.md
+db/*.db
