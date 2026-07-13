@@ -1,0 +1,225 @@
+# 中国 AI 周报 — 信息源配置
+# 26 个信息源，6 个生态分组，Tier 1/2 分级
+
+sources:
+  # === Tier 1: 大模型企业官方 (8源) ===
+  deepseek_official:
+    name: "DeepSeek 官方"
+    tier: 1
+    ecosystem: "llm_startup"
+    type: web_fetch
+    url: "https://api-docs.deepseek.com/news"
+    enabled: true
+
+  zhipu_official:
+    name: "智谱 AI 官方"
+    tier: 1
+    ecosystem: "llm_startup"
+    type: web_fetch
+    url: "https://open.bigmodel.cn/dev/api/news"
+    enabled: true
+
+  qwen_official:
+    name: "阿里通义千问"
+    tier: 1
+    ecosystem: "big_tech"
+    type: web_fetch
+    url: "https://tongyi.aliyun.com/"
+    enabled: true
+
+  bytedance_doubao:
+    name: "字节豆包官方"
+    tier: 1
+    ecosystem: "big_tech"
+    type: web_search
+    enabled: true
+
+  baidu_ernie:
+    name: "百度文心官方"
+    tier: 1
+    ecosystem: "big_tech"
+    type: web_search
+    enabled: true
+
+  minimax_official:
+    name: "MiniMax 官方"
+    tier: 1
+    ecosystem: "llm_startup"
+    type: web_search
+    enabled: true
+
+  kimi_official:
+    name: "月之暗面 Kimi"
+    tier: 1
+    ecosystem: "llm_startup"
+    type: web_search
+    enabled: true
+
+  stepfun_official:
+    name: "阶跃星辰"
+    tier: 1
+    ecosystem: "llm_startup"
+    type: web_search
+    enabled: true
+
+  # === Tier 1: 算力芯片 (4源) ===
+  huawei_ascend:
+    name: "华为昇腾"
+    tier: 1
+    ecosystem: "chip"
+    type: web_search
+    enabled: true
+
+  cambricon:
+    name: "寒武纪"
+    tier: 1
+    ecosystem: "chip"
+    type: web_search
+    enabled: true
+
+  hygon:
+    name: "海光信息"
+    tier: 1
+    ecosystem: "chip"
+    type: web_search
+    enabled: true
+
+  moore_threads:
+    name: "摩尔线程"
+    tier: 1
+    ecosystem: "chip"
+    type: web_search
+    enabled: true
+
+  # === Tier 1: 政策监管 (2源) ===
+  cac_gov:
+    name: "国家网信办"
+    tier: 1
+    ecosystem: "government"
+    type: web_search
+    enabled: true
+
+  miit_gov:
+    name: "工信部"
+    tier: 1
+    ecosystem: "government"
+    type: web_search
+    enabled: true
+
+  # === Tier 2: 科技媒体 (6源) ===
+  media_36kr:
+    name: "36氪"
+    tier: 2
+    ecosystem: "tech_media"
+    type: web_search
+    enabled: true
+
+  media_jiqizhixin:
+    name: "机器之心"
+    tier: 2
+    ecosystem: "tech_media"
+    type: web_search
+    enabled: true
+
+  media_liangzwei:
+    name: "量子位"
+    tier: 2
+    ecosystem: "tech_media"
+    type: web_search
+    enabled: true
+
+  media_ithome:
+    name: "IT之家"
+    tier: 2
+    ecosystem: "tech_media"
+    type: web_search
+    enabled: true
+
+  media_jiemian:
+    name: "界面新闻"
+    tier: 2
+    ecosystem: "tech_media"
+    type: web_search
+    enabled: true
+
+  media_tmtpost:
+    name: "钛媒体"
+    tier: 2
+    ecosystem: "tech_media"
+    type: web_search
+    enabled: true
+
+  # === Tier 2: 财经媒体 (4源) ===
+  finance_eastmoney:
+    name: "东方财富"
+    tier: 2
+    ecosystem: "finance_media"
+    type: web_search
+    enabled: true
+
+  finance_stcn:
+    name: "证券时报"
+    tier: 2
+    ecosystem: "finance_media"
+    type: web_search
+    enabled: true
+
+  finance_chinaventure:
+    name: "投中网"
+    tier: 2
+    ecosystem: "finance_media"
+    type: web_search
+    enabled: true
+
+  finance_cnstock:
+    name: "中国证券报"
+    tier: 2
+    ecosystem: "finance_media"
+    type: web_search
+    enabled: true
+
+  # === Tier 2: 行业研究 (2源) ===
+  research_goldman:
+    name: "高盛 AI 研究"
+    tier: 2
+    ecosystem: "industry_research"
+    type: web_search
+    enabled: true
+
+  research_idc:
+    name: "IDC 中国"
+    tier: 2
+    ecosystem: "industry_research"
+    type: web_search
+    enabled: true
+
+# 生态分组（来源独立性修正）
+ecosystems:
+  llm_startup:
+    name: "大模型创业公司"
+    sources: ["deepseek_official", "zhipu_official", "minimax_official", "kimi_official", "stepfun_official"]
+    independence_weight: 0.7
+  big_tech:
+    name: "互联网巨头"
+    sources: ["qwen_official", "bytedance_doubao", "baidu_ernie"]
+    independence_weight: 0.8
+  chip:
+    name: "算力芯片"
+    sources: ["huawei_ascend", "cambricon", "hygon", "moore_threads"]
+    independence_weight: 0.8
+  government:
+    name: "政府与监管"
+    sources: ["cac_gov", "miit_gov"]
+    independence_weight: 1.0
+  tech_media:
+    name: "科技媒体"
+    sources: ["media_36kr", "media_jiqizhixin", "media_liangzwei", "media_ithome", "media_jiemian", "media_tmtpost"]
+    independence_weight: 0.6
+  finance_media:
+    name: "财经媒体"
+    sources: ["finance_eastmoney", "finance_stcn", "finance_chinaventure", "finance_cnstock"]
+    independence_weight: 0.6
+  industry_research:
+    name: "行业研究"
+    sources: ["research_goldman", "research_idc"]
+    independence_weight: 0.8
